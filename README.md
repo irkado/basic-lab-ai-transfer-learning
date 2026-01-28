@@ -43,6 +43,26 @@ add new library to .venv envi
 update requirements.txt
 -> ```pip freeze > requirements.txt```
 
+## Dataset Setup
+Generate an API token from the kaggle website after logging in.
+Then install kaggle: 
+```bash 
+python -m pip install kaggle
+```
+
+After installing kaggle run these commands to download the PlantVillage dataset:
+```bash
+export KAGGLE_API_TOKEN="YOUR_TOKEN_HERE"
+```
+
+If you decide to change the name of the directory (data in this case) make sure to edit the path in preprocessing.py
+```bash
+mkdir -p data
+kaggle datasets download -d mohitsingh1804/plantvillage -p data --unzip
+```
+
+
+
 ## Workload Distribution
 **Yarik** - Data Preparation: Load and preprocess our dataset, perform normalization, resizing,
 and data augmentation, and split data into training, validation, and test sets
