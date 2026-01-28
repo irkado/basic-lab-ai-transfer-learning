@@ -34,26 +34,13 @@ test_transforms = transforms.Compose([
 ])
 
 
-path = "./Data_Preparation/data/color"
+train_path = "./data/PlantVillage/train/"
+val_path = './data/PlantVillage/val/'
 
-train_data_full = datasets.ImageFolder(path, transform=train_transforms)
-test_data_full = datasets.ImageFolder(path, transform=test_transforms)
+train_dataset = datasets.ImageFolder(train_path, transform=train_transforms)
+val_dataset   = datasets.ImageFolder(val_path, transform=test_transforms)
 
-num_train = len(train_data_full)
-indices = torch.randperm(num_train, generator=torch.Generator().manual_seed(SEED)).tolist()
-
-train_size = int(0.7 * num_train)
-val_size = int(0.15 * num_train)
-test_size = num_train - train_size - val_size
-
-train_indices = indices[:train_size]
-val_indices   = indices[train_size : train_size+val_size]
-test_indices  = indices[train_size+val_size:]
-
-train_dataset = Subset(train_data_full, train_indices)
-val_dataset  = Subset(test_data_full, val_indices)
-test_dataset = Subset(test_data_full, test_indices)
-
+test_dataset  = val_dataset
 
 batch_size = 64
 
