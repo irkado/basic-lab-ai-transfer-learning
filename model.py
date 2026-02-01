@@ -16,7 +16,7 @@ class TransferModel(nn.Module):
 
         if backbone == "densenet121":
             weights = models.DenseNet121_Weights.DEFAULT if pretrained else None
-            self.model = models.resnet18(weights=weights)
+            self.model = models.densenet121(weights=weights)
 
             feat_dim = self.model.fc.in_features
             self.model.fc = nn.Sequential(
@@ -26,7 +26,7 @@ class TransferModel(nn.Module):
 
         elif backbone == "efficientnet_b0":
             weights = models.EfficientNet_B0_Weights.DEFAULT if pretrained else None
-            self.model = models.mobilenet_v2(weights=weights)
+            self.model = models.efficientnet_b0(weights=weights)
 
             feat_dim = self.model.classifier[1].in_features
             self.model.classifier = nn.Sequential(
