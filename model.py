@@ -19,7 +19,7 @@ class TransferModel(nn.Module):
             self.model = models.densenet121(weights=weights)
 
             feat_dim = self.model.fc.in_features
-            self.model.fc = nn.Sequential(
+            self.model.classifier = nn.Sequential(
                 nn.Dropout(p=dropout),
                 nn.Linear(feat_dim, num_classes),
             )
