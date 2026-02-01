@@ -12,19 +12,19 @@ The project was developed using **Python 3.12**.
 
 ## Project Setup
 
-1. Ensure that python version 3.12 is installed.
-2. Clone the repository:
+Ensure that python version 3.12 is installed. 
+Clone the repository:
 ```bash
 git clone https://github.com/irkado/basic-lab-ai-transfer-learning.git
 cd basic-lab-ai-transfer-learning
 ```
-3. To avoid conflicts with dependencies project uses venv virtual environment.<br>
-**To create the environment:**
+To avoid conflicts with dependencies, this project uses venv.<br>
+
+**To create the environment, run:**
 ```bash
 python3.12 -m venv .venv
 ```
 **Activate the environment:**
-
 ```bash
 source .venv/bin/activate
 ```
@@ -33,35 +33,48 @@ source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
-**To exit environment**
+**To exit the environment, run:**
 ```bash
 deactivate
 ```
 ---
-add new library to .venv envi
+add a new library to .venv
 -> ```pip install scikit-learn```<br>
 update requirements.txt
 -> ```pip freeze > requirements.txt```
 
 ## Dataset Setup
-Generate an API token from the kaggle website after logging in.
+Go to kaggle.com and log in. Then go to Settings -> API Tokens -> Generate New Token. Open a terminal and run:
+```bash
+export KAGGLE_API_TOKEN=UR_TOKEN
+```
+This sets the token as an environment variable (Linux/MacOS).
+To make it permanent just add it to ur shell config with:
+
+```bash
+echo 'export KAGGLE_API_TOKEN=UR_TOKEN' >> ~/.bashrc
+#or ~/.zshrc or whatever shell
+```
+Then reload and check if the token is active:
+```bash
+source ~/.bashrc
+echo $KAGGLE_API_TOKEN
+```
+
 Then install kaggle: 
 ```bash 
 python -m pip install kaggle
 ```
 
-After installing kaggle run these commands to download the PlantVillage dataset:
-```bash
-export KAGGLE_API_TOKEN="YOUR_TOKEN_HERE"
-```
-
-If you decide to change the name of the directory (data in this case) make sure to edit the path in preprocessing.py
+After installing kaggle download the PlantVillage dataset:
 ```bash
 mkdir -p data
 kaggle datasets download -d mohitsingh1804/plantvillage -p data --unzip
 ```
 
+If you decide to change the name of the directory (`data` in this case) make sure to edit the path in preprocessing.py
 
+---
 
 ## Workload Distribution
 **Yarik** - Data Preparation: Load and preprocess our dataset, perform normalization, resizing,
