@@ -18,7 +18,7 @@ class TransferModel(nn.Module):
             weights = models.DenseNet121_Weights.DEFAULT if pretrained else None
             self.model = models.densenet121(weights=weights)
 
-            feat_dim = self.model.fc.in_features
+            feat_dim = self.model.classifier.in_features
             self.model.classifier = nn.Sequential(
                 nn.Dropout(p=dropout),
                 nn.Linear(feat_dim, num_classes),
