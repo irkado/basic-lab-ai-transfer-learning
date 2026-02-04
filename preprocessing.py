@@ -38,30 +38,37 @@ train_path = "./data/PlantVillage/train/"
 val_path = './data/PlantVillage/val/'
 
 train_dataset = datasets.ImageFolder(train_path, transform=train_transforms)
-val_dataset   = datasets.ImageFolder(val_path, transform=test_transforms)
+test_dataset   = datasets.ImageFolder(val_path, transform=test_transforms)
 
-test_dataset  = val_dataset
+
+val_size = int(len(test_dataset) / 2)
+test_size = len(test_dataset) - val_size
+test_set, validation_set = torch.utils.data.random_split(
+    test_dataset,
+    [test_size, val_size],
+    generator=torch.Generator().manual_seed(SEED)
+)
 
 batch_size = 64
 
 train_loader = DataLoader(
-    train_dataset, 
-    batch_size=batch_size, 
-    shuffle=True, 
-    num_workers=2, 
-    generator=torch.Generator().manual_seed(SEED)
+      train_dataset, 
+      batch_size=batch_size, 
+      shuffle=True, 
+      num_workers=2, 
+      generator=torch.Generator().manual_seed(SEED)
 )
 
 validation_loader = DataLoader(
-    val_dataset, 
-    batch_size=batch_size, 
-    shuffle=False, 
-    num_workers=2
+      validation_set, 
+      batch_size=batch_size, 
+      shuffle=False, 
+      num_workers=2
 )
 
 test_loader = DataLoader(
-    test_dataset, 
-    batch_size=batch_size, 
-    shuffle=False, 
-    num_workers=2
+      test_set, 
+      batch_size=batch_size, 
+      shuffle=False, 
+      num_workers=2
 )
