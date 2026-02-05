@@ -10,11 +10,21 @@ The task is a multi-class classification problem where many disease categories e
 
 ## Dataset
 
-The dataset used in this project is PlantVillage, obtained from Kaggle. It contains labeled RGB images of single plant leaves captured under relatively controlled conditions.
+The dataset used in this project is PlantVillage, obtained from Kaggle. It contains labeled RGB high-quality photos with a resolution of 256 by 256 pixels of single plant leaves captured under relatively controlled conditions. There are around 38 classes of this leaves with different deseases, there are few pictures from our dataset with their labels :
 
-![Training dataset class distribution](images/training_dataset.png)
+![alt text](Input_images_AI_lab.png)
 
-The dataset exhibits class imbalance, where some disease categories (such as several tomato leaf diseases) contain thousands of samples, while others (for example, healthy potato leaves) are represented by significantly fewer images. This imbalance can bias learning toward majority classes and poses an additional challenge for reliable classification, particularly for underrepresented categories.
+Another important question is : "How our data is distributed ?".The answer for this questions we can observed below :
+
+![alt text](Ai_lab_train_distrib.png)
+
+Test loader :
+
+![alt text](Ai_lab_test_distrib.png)
+
+
+
+As we can see, the dataset exhibits class imbalance, where some disease categories (such as several tomato leaf diseases) contain thousands of samples, while others (for example, healthy potato leaves) are represented by significantly fewer images. This imbalance can bias learning toward majority classes and poses an additional challenge for reliable classification, particularly for underrepresented categories.
 
 ---
 
