@@ -46,13 +46,48 @@ EfficientNet-B0 uses compound scaling, which jointly scales network depth, width
 
 ---
 
-## Training
+## Training  
+  
+We used transfer learning to adapt ImageNet-pretrained backbones (DenseNet-121 and EfficientNet-B0) to the PlantVillage dataset. For each backbone, we trained in two stages: (1) head-only training to quickly fit a new classifier to the target classes, and (2) fine-tuning of the last backbone block to better capture domain-specific leaf textures and disease patterns.
 
-We usedTransfer Learning to make these strong pre-trained models work with the data we have. We tried two ways of training the models:
+Training uses **CrossEntropyLoss** and runs on GPU if available (`cuda`), otherwise CPU. During training, inputs and labels are moved to the selected device with `non_blocking=True` for faster transfers.
 
-* **Head-Only Training:** Freezing the main model and training only the final newly added classification layer. This is more computationally efficient and reduces the risk of overfitting, however it limits the model's ability to adapt to domain-specific leaf textures.
+### Head-Only Training (feature extractor)
 
-* **Fine-Tuning:** Unfreezing specific layers to refine the model's performance on leaf textures. Here the model is allowed to refine high-level feature representations specifically for plant disease patterns, at the cost of increased training time (and possibly overfitting).
+In the first stage, the model is initialized with `pretrained=True` and a dropout of `0.2`. The backbone is frozen via `model.train_head_only()`, so only the newly added classification head is updated. This reduces compute cost and stabilizes early training, while leveraging generic ImageNet features.
+
+Optimization for head-only training:
+- Optimizer: **Adam**
+- Learning rate: **1e-3**
+- Weight decay: **1e-4**
+- Epochs: **5**
+
+### Fine-Tuning (last block + head)
+
+After head-only training, we reload the best head-only weights and unfreeze only the last backbone block via `model.fine_tune_last_block()`. This allows the network to adapt higher-level features to plant-specific patterns while keeping most pretrained weights fixed to limit overfitting.
+
+Optimization for fine-tuning:
+- Optimizer: **Adam**
+- Learning rate: **1e-4** (lower for stable fine-tuning)
+- Weight decay: **1e-4**
+- Epochs: **7**
+
+### Validation, checkpointing, and learning-rate scheduling
+
+After each epoch, we evaluate on the validation set using `eval_phase()` with `torch.no_grad()` to reduce memory usage and speed up evaluation. We track training and validation loss/accuracy per epoch.
+
+We perform checkpointing based on validation accuracy: whenever `val_acc` improves, we save the model weights (`model.state_dict()`) as the current best. At the end of training, the model reloads the best checkpoint before returning.
+
+Learning rate is controlled using `ReduceLROnPlateau`, which monitors validation loss and reduces the learning rate when progress stalls:
+- factor = **0.5**
+- patience = **2**
+- min_lr = **1e-6**
+
+### Saved outputs
+
+For each backbone, we save both training histories and final weights:
+- Training history CSVs: `{backbone}_head_history.csv`, `{backbone}_finetune_history.csv`
+- Best weights: `{backbone}_best_head.pt`, `{backbone}_best_finetuned.pt`
 
 ---
 
