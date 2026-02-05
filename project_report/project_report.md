@@ -1,75 +1,90 @@
 # Project Report: Transfer Learning for Image Classification
 
-## Introduction
-Early detection of plant diseases is crucial for healthy crops and better food production. This repository implements a Deep Learning solution to automatically classify 38 different types of plant leaves (including both healthy and diseased samples) using the PlantVillage dataset.
+## Introduction and Problem Definition
 
-Goal is to compare the performance of two popular CNN models: DenseNet-121 and EfficientNet B0. We explore how well these models learn using two different strategies: training just the classification head versus fine-tuning the model's deeper layers.
+Early detection of plant diseases is essential for maintaining crop health and improving food production. In this project, we implement a deep learning–based image classification system that identifies 38 plant leaf conditions, including healthy and diseased samples, using the PlantVillage dataset. The goal is to evaluate and compare two pretrained CNN architectures, DenseNet-121 and EfficientNet-B0, using transfer learning.
 
-## Problem Definition
-The goal of this project is to build a Deep Learning model that can correctly identify 38 plant conditions from pictures of single leaves. These plant conditions include 14 types of crops and various diseases. The main problem is telling diseases apart that look very similar and have the texture. The Deep Learning model has to be good at distinguishing between these diseases, with similar visual symptoms and texture patterns of the plant conditions.
+The task is a multi-class classification problem where many disease categories exhibit high visual similarity, especially within the same crop species. This requires the model to capture fine-grained texture and color patterns rather than relying on coarse visual features. To address this challenge, we compare head-only training with fine-tuning of deeper layers, assessing how model adaptation impacts classification performance and generalization.
 
-To address this, we aim to implement and optimize advanced CNN architectures—DenseNet-121 and EfficientNet B0—to automate the detection process. This solution is designed to make disease diagnosis faster and more accessible, enabling early intervention to significantly decrease crop losses.
-
+---
 ## Dataset
-For dataset we used PlantVillage from Kaggle.
+
+The dataset used in this project is PlantVillage, obtained from Kaggle. It contains labeled RGB images of single plant leaves captured under relatively controlled conditions.
 
 ![Training dataset class distribution](images/training_dataset.png)
 
-We faced a problem of imbalanced classes: some classes (like specific Tomato diseases) have thousands of images, while others (like Potato Healthy) may have significantly fewer.
+The dataset exhibits class imbalance, where some disease categories (such as several tomato leaf diseases) contain thousands of samples, while others (for example, healthy potato leaves) are represented by significantly fewer images. This imbalance can bias learning toward majority classes and poses an additional challenge for reliable classification, particularly for underrepresented categories.
 
-We address this problem during training step.
-
+---
 ## Model Architecture
-* DenseNet-121
+
+### DenseNet-121
+
+DenseNet-121 is a deep convolutional neural network that uses dense connectivity between layers, where each layer receives feature maps from all preceding layers within the same dense block. This design allows for feature reuse and improves gradient flow, which leads to more stable training in deep networks while keeping the parameter count relatively low. Due to its ability to preserve and reuse fine-grained features, DenseNet-121 is well suited for tasks that require detailed texture discrimination, in our case: identifying visually similar plant diseases.
 
 ![DenseNet121 Model Architecture](images/DenseNet121_architecture.png)
 
+---
+### EfficientNet-B0
 
-* EfficientNet B0
+EfficientNet-B0 is built around the principle of compound scaling, which balances network depth, width, and input resolution to achieve high accuracy with reduced computational cost. Its architecture is composed of repeated MBConv (Mobile Inverted Bottleneck) blocks, which use depthwise separable convolutions and squeeze-and-excitation mechanisms to efficiently capture both spatial and channel-wise information. By stacking these MBConv blocks with varying kernel sizes and expansion ratios across stages, EfficientNet-B0 achieves strong representational power while remaining highly parameter-efficient.
 
-![EfficientNet B0 Model Architecture](images/EfficientNet_B0_architecture.webp)
+| EfficientNet-B0: High-level architecture      | EfficientNet-B0: MBConv block structure        |
+| --------------------------------------------- | ---------------------------------------------- |
+| ![](images/EfficientNet_B0_architecture.webp) | ![](images/efficientnet_b0_classification.png) |
 
-
-
+---
 ## Training
 
-We looked at Transfer Learning to make these strong pre-trained models work with the data we have. We tried two ways of training the models:
+We usedTransfer Learning to make these strong pre-trained models work with the data we have. We tried two ways of training the models:
 
-* **Head-Only Training:** Freezing the main model and training only the final classification layer.
+* **Head-Only Training:** Freezing the main model and training only the final newly added classification layer. This is more computationally efficient and reduces the risk of overfitting, however it limits the model's ability to adapt to domain-specific leaf textures.
 
-* **Fine-Tuning:** Unfreezing specific layers to refine the model's performance on leaf textures.
+* **Fine-Tuning:** Unfreezing specific layers to refine the model's performance on leaf textures. Here the model is allowed to refine high-level feature representations specifically for plant disease patterns, at the cost of increased training time (and possibly overfitting).
 
+---
 ## Evaluation
-To evaluate our approach appropriately, we analyzed the performance differences between the two training strategies (Head-Only vs. Fine-Tuned) and the two model architectures (DenseNet-121 vs. EfficientNet-B0). Below we will focus on loss and accuracy curves during training and validation.
 
-### Impact of learning strategy
+### Loss Curve Comparison
+
+The graphs below compare training and validation loss for DenseNet-121 and EfficientNet-B0 under head-only training and fine-tuning.
+
+For both networks, head-only training shows a rapid initial loss drop followed by early saturation. Validation loss remains consistently lower than training loss, indicating stable optimization but limited representational adaptation due to frozen feature extractors.
+
 ![](images/loss_comparison_of_training.png)
 
-From this graph we can see that the choice of training strategy is very important when it comes to performance.
+In contrast, fine-tuned models achieve significantly lower final loss values and smoother convergence. The reduced gap between training and validation loss suggests improved generalization and better alignment of learned features with the PlantVillage domain. Minor fluctuations in validation loss toward later epochs indicate the onset of diminishing returns rather than instability.
 
-> Head Loss Curves EfficientNet-B0 and DenseNet-121
+### Global Accuracy Comparison
 
-Both models shows good performace. The blue line (Training Loss) and orange line (Validation Loss) go down quickly and then flatten out. This means the models are successfully learning to recognize the plant diseases.
+The following results summarize the maximum achieved training and validation accuracy for each model and training strategy.
 
-Nonetheless, we can also notice that EfficientNet starts a little bit better, since training loss starts with a slightly lower value and converges faster than DenseNet. This aligns with your table results where EfficientNet had slightly higher accuracy.
-
-> Fine-tuned Loss Curves EfficientNet-B0 and DenseNet-121
-
-Both models show excellent performance during the fine-tuning phase. The blue line (Training Loss) and orange line (Validation Loss) continue to decrease significantly, reaching very low values (below 0.03). This confirms that unfreezing the deeper layers allowed the models to learn the finer details of the leaf diseases effectively.
-
-But we can see that EfficientNet demonstrates smoother convergence. While DenseNet (top graph) shows a slight fluctuation around epoch 6 where the validation loss briefly increases, EfficientNet (bottom graph) maintains a very steady decline throughout all epochs. This suggests that EfficientNet was slightly more stable and robust during this final training stage.
-
-> Generalisation gap EfficientNet-B0 and DenseNet-121
-
-The fine-tuning strategy proves to be the best approach for transfer learning because it successfully minimizes the generalization gap to near zero (indicating perfect alignment between training and validation performance), whereas the head-only approach maintains a larger negative disparity where the model underfits the training data relative to the validation set.
-
-### Model comparison
 ![](images/accuracy_comparison_of_training.png)
-EfficientNet-B0 performed slightly better than DenseNet-121, starting stronger and reaching the highest final accuracy of 99.55%. It also learned more steadily, showing a smooth improvement line during fine-tuning while DenseNet-121 had some disturbance around epoch 6.
 
-### Max Accuracy Comparison
+Both architectures benefit significantly from fine-tuning, with validation accuracy improving by approximately 3–4 percentage points compared to head-only training. EfficientNet-B0 (fine-tuned) achieves the highest overall validation accuracy, marginally outperforming DenseNet-121 while using a more parameter-efficient design.
+
+Below we can see the small gap between training and validation accuracy across all configurations, which confirms strong generalization and absence of severe overfitting.
+
 ![](images/global_accuracy.png)
-The fine-tuning strategy significantly performed better than head-only approach, boosting validation accuracy from approximately 96% to over 99% for both architectures. For model comparison, EfficientNet-B0 proved to be the best, achieving the highest overall validation accuracy of 99.55% when fine-tuned.
 
-## Conclusions
+---
+### Quantitative Performance
+
+This table provides a comparison of both architectures across training strategies, including learning rate, number of epochs, and peak training and validation accuracy.
+
 ![Models Comparison](images/model_performance.png)
+
+Both DenseNet-121 and EfficientNet-B0 show a clear performance jump when moving from head-only training to fine-tuning. Head-only training converges quickly within 5 epochs but is limited in maximum achievable accuracy, which shows that frozen backbone features are insufficient for capturing fine-grained plant disease patterns.
+
+Fine-tuning, performed with a lower learning rate and extended training, enables both models to reach near-saturated accuracy above 99% on both training and validation sets. EfficientNet-B0 slightly outperforms DenseNet-121 in terms of validation accuracy while maintaining a more parameter-efficient design.
+
+Overall, the results confirm that fine-tuning pretrained CNNs is essential for high-performance plant disease classification, and that EfficientNet-B0 offers the best accuracy–efficiency trade-off in this setting.
+
+---
+## Conclusions
+
+The results show that while head-only training provides a fast and stable baseline, fine-tuning significantly improves classification accuracy by allowing the models to adapt to domain-specific leaf textures. Fine-tuned models achieved validation accuracies above 99% with minimal generalization gaps, indicating strong learning and limited overfitting.
+
+Between the two architectures, EfficientNet-B0 achieved slightly higher validation accuracy while remaining more computationally efficient. Our results confirm that transfer learning combined with selective fine-tuning is an effective approach for accurate and scalable plant disease detection.
+
+---
