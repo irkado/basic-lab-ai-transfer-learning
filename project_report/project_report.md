@@ -10,17 +10,16 @@ The task is a multi-class classification problem where many disease categories e
 
 ## Dataset
 
-The dataset used in this project is PlantVillage, obtained from Kaggle. It contains labeled RGB high-quality photos with a resolution of 256 by 256 pixels of single plant leaves captured under relatively controlled conditions. There are around 38 classes of this leaves with different deseases, there are few pictures from our dataset with their labels :
+The dataset used in this project is PlantVillage, obtained from Kaggle. It contains 54,305 labeled RGB images with a resolution of 256x256 pixels of single plant leaves captured under relatively controlled conditions. The images cover 14 species of crops (12 of which have healthy leaf images) and 17 basic diseases, 17 basic diseases, 4 bacterial diseases, 2 diseases caused by mold (oomycete), 2 viral diseases and 1 disease caused by a mite. In total the dataset has 38 classes. Below we take a look at a few images from our dataset with their labels:  
+![](images/Input_images_AI_lab.png)
 
-![alt text](Input_images_AI_lab.png)
+An important question is: "How is our data distributed?". It can be answered by observing the tables below:
 
-Another important question is : "How our data is distributed ?".The answer for this questions we can observed below :
+![](images/Ai_lab_train_distrib.png)
 
-![alt text](Ai_lab_train_distrib.png)
+Test loader:
 
-Test loader :
-
-![alt text](Ai_lab_test_distrib.png)
+![](images/Ai_lab_test_distrib.png)
 
 
 
