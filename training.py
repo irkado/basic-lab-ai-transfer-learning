@@ -15,7 +15,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("device:", device)
 
 
-#@torch.no_grad()
+@torch.no_grad()
 def eval_phase(model: nn.Module, loader, criterion: nn.Module):
     model.eval()
     running_loss = 0.0
