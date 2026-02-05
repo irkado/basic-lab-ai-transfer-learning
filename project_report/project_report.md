@@ -60,6 +60,8 @@ For both networks, head-only training shows a rapid initial loss drop followed b
 
 In contrast, fine-tuned models achieve significantly lower final loss values and smoother convergence. The reduced gap between training and validation loss suggests improved generalization and better alignment of learned features with the PlantVillage domain. Minor fluctuations in validation loss toward later epochs indicate the onset of diminishing returns rather than instability.
 
+---
+
 ### Global Accuracy Comparison
 
 The following results summarize the maximum achieved training and validation accuracy for each model and training strategy.
@@ -91,3 +93,5 @@ Fine-tuning, performed with a lower learning rate and extended training, enables
 The results show that while head-only training provides a fast and stable baseline, fine-tuning significantly improves classification accuracy by allowing the models to adapt to domain-specific leaf textures. Fine-tuned models achieved validation accuracies above 99% with minimal generalization gaps, indicating strong learning and limited overfitting.
 
 Between the two architectures, EfficientNet-B0 achieved slightly higher validation accuracy while remaining more computationally efficient. Our results confirm that transfer learning combined with selective fine-tuning is an effective approach for accurate and scalable plant disease detection.
+
+---
