@@ -43,6 +43,8 @@ add a new library to .venv
 update requirements.txt
 -> ```pip freeze > requirements.txt```
 
+---
+
 ## Dataset Setup
 Go to kaggle.com and log in. Then go to Settings -> API Tokens -> Generate New Token. Open a terminal and run:
 ```bash
@@ -55,7 +57,7 @@ To make it permanent just add it to ur shell config with:
 echo 'export KAGGLE_API_TOKEN=UR_TOKEN' >> ~/.bashrc
 #or ~/.zshrc or whatever shell
 ```
-Then reload and check if the token is active:
+Reload and check if the token is active:
 ```bash
 source ~/.bashrc
 echo $KAGGLE_API_TOKEN
@@ -66,7 +68,7 @@ Then install kaggle:
 python -m pip install kaggle
 ```
 
-After installing kaggle download the PlantVillage dataset:
+Download the PlantVillage dataset:
 ```bash
 mkdir -p data
 kaggle datasets download -d mohitsingh1804/plantvillage -p data --unzip
@@ -75,6 +77,23 @@ kaggle datasets download -d mohitsingh1804/plantvillage -p data --unzip
 If you decide to change the name of the directory (`data` in this case) make sure to edit the path in preprocessing.py
 
 ---
+
+## Training
+To train the model, run:
+```bash
+python training.py --backbone densenet121
+python training.py --backbone efficientnetb0
+```
+The trained model weights will be saved as ```{backbone}_best_head.pt``` and ```{backbone}_best_finetuned.pt```.
+
+The results from evaluation (computed during training) will be saved as ```{backbone}_head_history.csv``` and ```{backbone}_finetuned_history.csv```.
+
+---
+
+## Evaluation and Inference
+For the evaluation analysis, refer to ```evaluation.ipynb```. 
+
+Inference is done at the end of the ```evaluation.ipynb``` notebook.
 
 ## Workload Distribution
 **Yarik** - Data Preparation: Load and preprocess our dataset, perform normalization, resizing,
